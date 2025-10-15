@@ -93,6 +93,7 @@ function App() {
         <TodoItemsPanel
           todoListId={selectedListId}
           todoListName={selectedList?.name || null}
+          onItemsChange={loadLists}
         />
       </div>
     </div>

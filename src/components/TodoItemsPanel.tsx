@@ -7,9 +7,10 @@ import CreateItemForm from './CreateItemForm'
 interface TodoItemsPanelProps {
   todoListId: number | null
   todoListName: string | null
+  onItemsChange: () => Promise<void>
 }
 
-export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPanelProps) {
+export default function TodoItemsPanel({ todoListId, todoListName, onItemsChange }: TodoItemsPanelProps) {
   const [items, setItems] = useState<TodoItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +46,8 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
       await createTodoItem(todoListId, { description, completed })
       // Reload items to reflect the new item
       await loadItems()
+      // Refresh parent lists to update item count
+      await onItemsChange()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create item')
       throw err
@@ -76,6 +79,8 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
       await deleteTodoItem(todoListId, itemId)
       // Reload items to reflect the deletion
       await loadItems()
+      // Refresh parent lists to update item count
+      await onItemsChange()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete item')
     }

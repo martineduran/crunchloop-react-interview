@@ -1,7 +1,7 @@
 export interface TodoList {
   id: number;
   name: string;
-  todoItems: TodoItem[];
+  incompleteItemCount: number;
 }
 
 export interface TodoItem {

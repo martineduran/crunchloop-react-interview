@@ -73,7 +73,7 @@ export default function TodoListItem({ list, isActive, onSelect, onDelete, onUpd
         <span>{list.name}</span>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {!isEditing && <span className="item-count">({list.todoItems?.length || 0})</span>}
+        {!isEditing && <span className="item-count">({list.incompleteItemCount})</span>}
         {isEditing ? (
           <>
             <button
