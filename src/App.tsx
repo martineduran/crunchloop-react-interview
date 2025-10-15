@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import type { TodoList } from './types'
 import { getTodoLists, createTodoList, deleteTodoList, updateTodoList } from './services/api'
-import TodoListItem from './components/TodoListItem'
-import CreateListForm from './components/CreateListForm'
+import TodoListsPanel from './components/TodoListsPanel'
+import TodoItemsPanel from './components/TodoItemsPanel'
 
 function App() {
   const [lists, setLists] = useState<TodoList[]>([])
@@ -72,45 +72,28 @@ function App() {
     }
   }
 
+  const selectedList = lists.find((list) => list.id === selectedListId)
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>Crunchloop Todo Lists Manager</h1>
       </header>
       <div className="container">
-        <div className="panel lists-panel">
-          <h2>Lists</h2>
-          <CreateListForm onCreateList={handleCreateList} />
-          {error && <div className="error">{error}</div>}
-          {loading ? (
-            <div className="empty-state">
-              <p>Loading...</p>
-            </div>
-          ) : lists.length === 0 ? (
-            <div className="empty-state">
-              <p>No todo lists yet</p>
-            </div>
-          ) : (
-            <div>
-              {lists.map((list) => (
-                <TodoListItem
-                  key={list.id}
-                  list={list}
-                  isActive={selectedListId === list.id}
-                  onSelect={handleSelectList}
-                  onDelete={handleDeleteList}
-                  onUpdate={handleUpdateList}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="panel items-panel">
-          <h2>Todo Items</h2>
-          <div className="empty-state">
-            <p>Select a list to view items</p>
-          </div>
-        </div>
+        <TodoListsPanel
+          lists={lists}
+          selectedListId={selectedListId}
+          loading={loading}
+          error={error}
+          onCreateList={handleCreateList}
+          onSelectList={handleSelectList}
+          onDeleteList={handleDeleteList}
+          onUpdateList={handleUpdateList}
+        />
+        <TodoItemsPanel
+          todoListId={selectedListId}
+          todoListName={selectedList?.name || null}
+        />
       </div>
     </div>
   )
