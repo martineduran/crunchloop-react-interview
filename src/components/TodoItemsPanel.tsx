@@ -131,6 +131,8 @@ export default function TodoItemsPanel({ todoListId, todoListName, onItemsChange
   const isProcessingJob = currentJobId !== null &&
     (!jobStatus || (jobStatus.state !== JobState.Completed && jobStatus.state !== JobState.Failed))
 
+  const hasIncompleteItems = items.some(item => !item.completed)
+
   if (!todoListId) {
     return (
       <div className="panel items-panel">
@@ -175,7 +177,7 @@ export default function TodoItemsPanel({ todoListId, todoListName, onItemsChange
           <button
             className="btn btn-primary"
             onClick={handleCompleteAll}
-            disabled={isProcessingJob}
+            disabled={isProcessingJob || !hasIncompleteItems}
             style={{ marginBottom: '10px' }}
           >
             Mark all as done
