@@ -74,6 +74,11 @@ body {
   align-items: center;
 }
 
+.list-item .item-count {
+  font-size: 0.9rem;
+  color: #666;
+}
+
 .list-item:hover {
   background: #e8e8e8;
 }
