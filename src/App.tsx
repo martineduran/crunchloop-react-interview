@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import type { TodoList } from './types'
-import { getTodoLists, createTodoList, deleteTodoList } from './services/api'
+import { getTodoLists, createTodoList, deleteTodoList, updateTodoList } from './services/api'
 import TodoListItem from './components/TodoListItem'
 import CreateListForm from './components/CreateListForm'
 
@@ -61,6 +61,17 @@ function App() {
     }
   }
 
+  const handleUpdateList = async (id: number, name: string) => {
+    try {
+      setError(null)
+      await updateTodoList(id, { name })
+      // Reload lists to reflect the update
+      await loadLists()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update list')
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -88,6 +99,7 @@ function App() {
                   isActive={selectedListId === list.id}
                   onSelect={handleSelectList}
                   onDelete={handleDeleteList}
+                  onUpdate={handleUpdateList}
                 />
               ))}
             </div>
