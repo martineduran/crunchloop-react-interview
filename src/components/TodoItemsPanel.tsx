@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TodoItem } from '../types'
-import { getTodoItems, createTodoItem } from '../services/api'
+import { getTodoItems, createTodoItem, updateTodoItem } from '../services/api'
 import TodoItemComponent from './TodoItemComponent'
 import CreateItemForm from './CreateItemForm'
 
@@ -51,6 +51,23 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
     }
   }
 
+  const handleToggleComplete = async (itemId: number, completed: boolean) => {
+    if (!todoListId) return
+
+    // Find the item to get its description
+    const item = items.find((i) => i.id === itemId)
+    if (!item) return
+
+    try {
+      setError(null)
+      await updateTodoItem(todoListId, itemId, { description: item.description, completed })
+      // Reload items to reflect the update
+      await loadItems()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update item')
+    }
+  }
+
   if (!todoListId) {
     return (
       <div className="panel items-panel">
@@ -78,7 +95,11 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
       ) : (
         <div>
           {items.map((item) => (
-            <TodoItemComponent key={item.id} item={item} />
+            <TodoItemComponent
+              key={item.id}
+              item={item}
+              onToggleComplete={handleToggleComplete}
+            />
           ))}
         </div>
       )}
