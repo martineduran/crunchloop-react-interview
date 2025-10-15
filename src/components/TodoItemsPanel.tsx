@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { TodoItem } from '../types'
-import { getTodoItems, createTodoItem, updateTodoItem } from '../services/api'
+import { getTodoItems, createTodoItem, updateTodoItem, deleteTodoItem } from '../services/api'
 import TodoItemComponent from './TodoItemComponent'
 import CreateItemForm from './CreateItemForm'
 
@@ -68,6 +68,19 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
     }
   }
 
+  const handleDeleteItem = async (itemId: number) => {
+    if (!todoListId) return
+
+    try {
+      setError(null)
+      await deleteTodoItem(todoListId, itemId)
+      // Reload items to reflect the deletion
+      await loadItems()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete item')
+    }
+  }
+
   if (!todoListId) {
     return (
       <div className="panel items-panel">
@@ -99,6 +112,7 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
               key={item.id}
               item={item}
               onToggleComplete={handleToggleComplete}
+              onDelete={handleDeleteItem}
             />
           ))}
         </div>
