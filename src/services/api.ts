@@ -5,6 +5,8 @@ import type {
   UpdateTodoListPayload,
   CreateTodoItemPayload,
   UpdateTodoItemPayload,
+  CompleteAllResponse,
+  JobStatus,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
@@ -82,4 +84,19 @@ export async function deleteTodoItem(todoListId: number, id: number): Promise<vo
     method: 'DELETE',
   });
   if (!response.ok) throw new Error('Failed to delete todo item');
+}
+
+// Complete All
+export async function completeAllTodoItems(todoListId: number): Promise<CompleteAllResponse> {
+  const response = await fetch(`${API_BASE_URL}/todolists/${todoListId}/complete-all`, {
+    method: 'POST',
+  });
+  if (!response.ok) throw new Error('Failed to start complete all job');
+  return response.json();
+}
+
+export async function getJobStatus(todoListId: number, jobId: string): Promise<JobStatus> {
+  const response = await fetch(`${API_BASE_URL}/todolists/${todoListId}/jobs/${jobId}/status`);
+  if (!response.ok) throw new Error('Failed to fetch job status');
+  return response.json();
 }

@@ -28,3 +28,24 @@ export interface UpdateTodoItemPayload {
   description: string;
   completed: boolean;
 }
+
+export enum JobState {
+  Queued = 0,
+  Processing = 1,
+  Completed = 2,
+  Failed = 3,
+}
+
+export interface JobStatus {
+  jobId: string;
+  state: JobState;
+  processedCount: number;
+  totalCount: number;
+  errorMessage?: string;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export interface CompleteAllResponse {
+  jobId: string;
+}
