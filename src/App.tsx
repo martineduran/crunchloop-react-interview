@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import type { TodoList } from './types'
-import { getTodoLists } from './services/api'
+import { getTodoLists, createTodoList } from './services/api'
 import TodoListItem from './components/TodoListItem'
+import CreateListForm from './components/CreateListForm'
 
 function App() {
   const [lists, setLists] = useState<TodoList[]>([])
@@ -31,6 +32,20 @@ function App() {
     setSelectedListId(id)
   }
 
+  const handleCreateList = async (name: string) => {
+    try {
+      setError(null)
+      const result = await createTodoList({ name })
+      // Reload lists to get the newly created list with all its data
+      await loadLists()
+      // Auto-select the newly created list
+      setSelectedListId(result.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create list')
+      throw err
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -39,6 +54,7 @@ function App() {
       <div className="container">
         <div className="panel lists-panel">
           <h2>Lists</h2>
+          <CreateListForm onCreateList={handleCreateList} />
           {error && <div className="error">{error}</div>}
           {loading ? (
             <div className="empty-state">
