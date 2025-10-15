@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import type { TodoList } from './types'
-import { getTodoLists, createTodoList } from './services/api'
+import { getTodoLists, createTodoList, deleteTodoList } from './services/api'
 import TodoListItem from './components/TodoListItem'
 import CreateListForm from './components/CreateListForm'
 
@@ -46,6 +46,21 @@ function App() {
     }
   }
 
+  const handleDeleteList = async (id: number) => {
+    try {
+      setError(null)
+      await deleteTodoList(id)
+      // If we deleted the selected list, clear the selection
+      if (selectedListId === id) {
+        setSelectedListId(null)
+      }
+      // Reload lists to reflect the deletion
+      await loadLists()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete list')
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -72,6 +87,7 @@ function App() {
                   list={list}
                   isActive={selectedListId === list.id}
                   onSelect={handleSelectList}
+                  onDelete={handleDeleteList}
                 />
               ))}
             </div>
