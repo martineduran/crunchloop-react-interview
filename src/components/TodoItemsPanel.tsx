@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { TodoItem } from '../types'
-import { getTodoItems } from '../services/api'
+import { getTodoItems, createTodoItem } from '../services/api'
 import TodoItemComponent from './TodoItemComponent'
+import CreateItemForm from './CreateItemForm'
 
 interface TodoItemsPanelProps {
   todoListId: number | null
@@ -36,6 +37,20 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
     }
   }
 
+  const handleCreateItem = async (description: string, completed: boolean) => {
+    if (!todoListId) return
+
+    try {
+      setError(null)
+      await createTodoItem(todoListId, { description, completed })
+      // Reload items to reflect the new item
+      await loadItems()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create item')
+      throw err
+    }
+  }
+
   if (!todoListId) {
     return (
       <div className="panel items-panel">
@@ -50,6 +65,7 @@ export default function TodoItemsPanel({ todoListId, todoListName }: TodoItemsPa
   return (
     <div className="panel items-panel">
       <h2>Todo Items {todoListName && `- ${todoListName}`}</h2>
+      <CreateItemForm onCreateItem={handleCreateItem} />
       {error && <div className="error">{error}</div>}
       {loading ? (
         <div className="empty-state">
