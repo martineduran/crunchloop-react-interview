@@ -66,6 +66,8 @@ export default function TodoItemsPanel({ todoListId, todoListName, onItemsChange
       await updateTodoItem(todoListId, itemId, { description: item.description, completed })
       // Reload items to reflect the update
       await loadItems()
+      // Refresh parent lists to update incomplete item count
+      await onItemsChange()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update item')
     }
